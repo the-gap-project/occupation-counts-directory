@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTs Working with Adults with ADHD — occupation-counts</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a18;
+    --paper: #f5f0e8;
+    --rust: #c0392b;
+    --slate: #4a4a52;
+    --rule: #c8b89a;
+    --faint: #e8e0d0;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 32px 100px;
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 14px 0 10px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .mono { font-family: 'DM Mono', monospace; }
+
+  .masthead-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+
+  /* HEADLINE */
+  .headline {
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .deck {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--slate);
+    max-width: 560px;
+    border-left: 3px solid var(--rust);
+    padding-left: 16px;
+    line-height: 1.6;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tab-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--slate);
+    cursor: pointer;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active {
+    color: var(--ink);
+    border-bottom-color: var(--rust);
+  }
+
+  .tab-btn:hover:not(.active) {
+    color: var(--ink);
+  }
+
+  /* PANEL */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SEARCH */
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .search-bar input {
+    flex: 1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    background: var(--white);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    outline: none;
+  }
+
+  .search-bar input:focus { border-color: var(--ink); }
+
+  .search-bar input::placeholder { color: var(--slate); }
+
+  /* COUNT */
+  .dir-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 16px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--faint);
+    border-left: 3px solid var(--faint);
+    padding: 20px 24px;
+    margin-bottom: 6px;
+    transition: border-left-color 0.2s;
+  }
+
+  .card:hover { border-left-color: var(--rust); }
+
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .card-location {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 8px;
+  }
+
+  .card-contact {
+    font-size: 13px;
+    color: var(--rust);
+    margin-bottom: 6px;
+    word-break: break-all;
+  }
+
+  .card-contact a { color: var(--rust); text-decoration: none; }
+  .card-contact a:hover { text-decoration: underline; }
+
+  .card-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    background: var(--faint);
+    color: var(--slate);
+    margin-right: 4px;
+    margin-top: 4px;
+  }
+
+  .card-note {
+    font-size: 13px;
+    color: var(--slate);
+    margin-top: 10px;
+    line-height: 1.6;
+    border-top: 1px solid var(--faint);
+    padding-top: 10px;
+  }
+
+  .card-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--rule);
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  /* EMPTY / LOADING */
+  .state-msg {
+    text-align: center;
+    padding: 48px 0;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--slate);
+    font-size: 16px;
+  }
+
+  /* FORM */
+  .form-section {
+    margin-bottom: 28px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .field { margin-bottom: 14px; }
+
+  label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+
+  label .req { color: var(--rust); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  select,
+  textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    background: var(--white);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    outline: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus { border-color: var(--ink); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .submit-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 24px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.15s;
+    margin-top: 8px;
+  }
+
+  .submit-btn:hover { background: var(--rust); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .form-msg {
+    font-size: 13px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .form-msg.ok { background: #e8f5e9; color: #2e7d32; display: block; }
+  .form-msg.err { background: #fdecea; color: #b71c1c; display: block; }
+
+  .form-note {
+    font-size: 12px;
+    color: var(--slate);
+    margin-top: 16px;
+    line-height: 1.6;
+    border-top: 1px solid var(--faint);
+    padding-top: 12px;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 60px;
+    border-top: 3px solid var(--ink);
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .footer span {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+
+  @media (max-width: 560px) {
+    .page { padding: 28px 18px 60px; }
+    .row-2 { grid-template-columns: 1fr; }
+    h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <span class="masthead-label">occupation-counts — the gap project</span>
+    <span class="masthead-label" id="today"></span>
+  </div>
+
+  <div class="headline">
+    <span class="kicker">Practitioner Directory · Adults with ADHD</span>
+    <h1>OTs Working with<br>Adults with ADHD</h1>
+    <p class="deck">A coalition directory for occupational therapists — add yourself, find colleagues, build the field.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('browse')">Browse directory</button>
+    <button class="tab-btn" onclick="switchTab('add')">Add yourself</button>
+  </div>
+
+  <!-- BROWSE -->
+  <div id="browse" class="panel active">
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Search by name, city, state, setting…" oninput="renderList()">
+    </div>
+    <div class="dir-count" id="dir-count"></div>
+    <div id="list"><div class="state-msg">Loading…</div></div>
+  </div>
+
+  <!-- ADD -->
+  <div id="add" class="panel">
+    <div class="form-section">
+      <div class="section-label">Your details</div>
+      <div class="row-2">
+        <div class="field">
+          <label>First name <span class="req">*</span></label>
+          <input type="text" id="f-first" placeholder="Jordan">
+        </div>
+        <div class="field">
+          <label>Last name <span class="req">*</span></label>
+          <input type="text" id="f-last" placeholder="Rivera">
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>City <span class="req">*</span></label>
+          <input type="text" id="f-city" placeholder="Boston">
+        </div>
+        <div class="field">
+          <label>State / Province <span class="req">*</span></label>
+          <input type="text" id="f-state" placeholder="MA">
+        </div>
+      </div>
+      <div class="field">
+        <label>Country</label>
+        <input type="text" id="f-country" placeholder="USA" value="USA">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="section-label">Contact &amp; practice</div>
+      <div class="field">
+        <label>Contact (email, website, or LinkedIn) <span class="req">*</span></label>
+        <input type="text" id="f-contact" placeholder="you@email.com or yoursite.com">
+      </div>
+      <div class="field">
+        <label>Practice setting</label>
+        <select id="f-setting">
+          <option value="">— select if applicable —</option>
+          <option>Private practice</option>
+          <option>Hospital / clinic</option>
+          <option>Community / outpatient</option>
+          <option>Telehealth only</option>
+          <option>Academia / research</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Anything you want colleagues to know</label>
+        <textarea id="f-note" placeholder="Focus areas, approach, telehealth availability, occupation-based practice framework used…"></textarea>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">Add me to the directory</button>
+    <div class="form-msg" id="form-msg"></div>
+    <p class="form-note">Entries are publicly visible to anyone with this link. This directory is maintained by the Gap Project. To request removal, contact the organiser via GitHub: github.com/the-gap-project.</p>
+  </div>
+
+  <div class="footer">
+    <span>occupation-counts · the gap project</span>
+    <span>github.com/the-gap-project</span>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://onsjmdtjhfpmhkyuiuhl.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_KCOifTJzS-T0Y85hyKxNzA_pYGBmT7K';
+  const TABLE = 'practitioners';
+
+  document.getElementById('today').textContent = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  async function apiFetch(path, opts = {}) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': opts.prefer || 'return=representation',
+        ...opts.headers
+      },
+      ...opts
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return opts.method === 'POST' ? res : res.json();
+  }
+
+  let allEntries = [];
+
+  async function loadEntries() {
+    try {
+      allEntries = await apiFetch(`${TABLE}?select=*&order=added.desc`);
+      renderList();
+    } catch(e) {
+      document.getElementById('list').innerHTML = '<div class="state-msg">Could not load directory. Please try again shortly.</div>';
+    }
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function contactLink(c) {
+    c = (c || '').trim();
+    if (!c) return '';
+    if (c.includes('@')) return `<a href="mailto:${esc(c)}">${esc(c)}</a>`;
+    const url = c.startsWith('http') ? c : 'https://' + c;
+    return `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(c)}</a>`;
+  }
+
+  function renderList() {
+    const q = (document.getElementById('search').value || '').toLowerCase();
+    const filtered = allEntries.filter(e =>
+      !q || [e.first, e.last, e.city, e.state, e.country, e.setting, e.note].join(' ').toLowerCase().includes(q)
+    );
+    const count = document.getElementById('dir-count');
+    const list = document.getElementById('list');
+
+    if (allEntries.length === 0) {
+      count.textContent = '';
+      list.innerHTML = '<div class="state-msg">No entries yet — be the first to add yourself.</div>';
+      return;
+    }
+
+    count.textContent = `${filtered.length} practitioner${filtered.length !== 1 ? 's' : ''}${q ? ' matching your search' : ''}`;
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="state-msg">No results match your search.</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(e => `
+      <div class="card">
+        <div class="card-name">${esc(e.first)} ${esc(e.last)}</div>
+        <div class="card-location">${esc(e.city)}, ${esc(e.state)}${e.country && e.country.toUpperCase() !== 'USA' ? ', ' + esc(e.country) : ''}</div>
+        <div class="card-contact">${contactLink(e.contact)}</div>
+        ${e.setting ? `<span class="card-badge">${esc(e.setting)}</span>` : ''}
+        ${e.note ? `<div class="card-note">${esc(e.note)}</div>` : ''}
+        ${e.added ? `<div class="card-date">Added ${e.added}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  async function submitForm() {
+    const first = document.getElementById('f-first').value.trim();
+    const last = document.getElementById('f-last').value.trim();
+    const city = document.getElementById('f-city').value.trim();
+    const state = document.getElementById('f-state').value.trim();
+    const contact = document.getElementById('f-contact').value.trim();
+    const msg = document.getElementById('form-msg');
+    msg.className = 'form-msg';
+
+    if (!first || !last || !city || !state || !contact) {
+      msg.className = 'form-msg err';
+      msg.textContent = 'Please fill in all required fields.';
+      return;
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      await apiFetch(TABLE, {
+        method: 'POST',
+        prefer: 'return=minimal',
+        body: JSON.stringify({
+          first, last, city, state,
+          country: document.getElementById('f-country').value.trim() || 'USA',
+          contact,
+          setting: document.getElementById('f-setting').value || null,
+          note: document.getElementById('f-note').value.trim() || null
+        })
+      });
+
+      msg.className = 'form-msg ok';
+      msg.textContent = "You've been added. Welcome to the directory.";
+      ['f-first','f-last','f-city','f-state','f-contact','f-note'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('f-country').value = 'USA';
+      document.getElementById('f-setting').value = '';
+      await loadEntries();
+    } catch(e) {
+      msg.className = 'form-msg err';
+      msg.textContent = 'Something went wrong. Check your connection and try again.';
+      console.error(e);
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Add me to the directory';
+  }
+
+  function switchTab(t) {
+    document.querySelectorAll('.tab-btn').forEach((el, i) => el.classList.toggle('active', ['browse','add'][i] === t));
+    document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+  }
+
+  loadEntries();
+</script>
+</body>
+</html>
